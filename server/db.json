@@ -1,0 +1,54 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "title": "Havic HV G-92 Gamepad",
+      "price": 192,
+      "image": "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=500&q=80",
+      "category": "gaming",
+      "description": "PlayStation 5 Controller Skin High quality vinyl with air channel adhesive for easy bubble free install & mess free removal Pressure sensitive.",
+      "rating": 5,
+      "stock": 10
+    },
+    {
+      "id": "2",
+      "title": "HAVIT HV-G92 Gamepad",
+      "price": 120,
+      "image": "https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=500&q=80",
+      "category": "gaming",
+      "description": "High performance wired gamepad controller for PC and consoles.",
+      "rating": 5,
+      "stock": 15
+    },
+    {
+      "id": "3",
+      "title": "AK-900 Wired Keyboard",
+      "price": 960,
+      "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80",
+      "category": "gaming",
+      "description": "RGB Mechanical gaming keyboard with tactile switches and fast response.",
+      "rating": 4.5,
+      "stock": 8
+    },
+    {
+      "id": "4",
+      "title": "IPS LCD Gaming Monitor",
+      "price": 370,
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500&q=80",
+      "category": "gaming",
+      "description": "Ultra-wide gaming monitor with 144Hz refresh rate and crisp color accuracy.",
+      "rating": 5,
+      "stock": 5
+    },
+    {
+      "id": "5",
+      "title": "RGB Liquid CPU Cooler",
+      "price": 160,
+      "image": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&q=80",
+      "category": "gaming",
+      "description": "Advanced liquid cooling system with customizable RGB lighting.",
+      "rating": 4.5,
+      "stock": 12
+    }
+  ]
+}
