@@ -1,11 +1,13 @@
+import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
 
 const MainLayouts = () => {
     return (
         <div>
-            <h2>navbar</h2>
+            <Navbar />
             <Outlet />
-            <h2>footer</h2>
+            <Footer />
         </div>
     );
 };
