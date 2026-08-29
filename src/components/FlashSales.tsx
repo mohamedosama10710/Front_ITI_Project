@@ -1,310 +1,135 @@
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Eye, Heart, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import React, { useRef, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useGetProductsQuery } from "../store/api/productApi";
+import { ProductCard } from "../components/ProductCard";
+import { useCountdown } from "../hooks/useCountDown";
 
-interface Product {
-  id: string;
-  title: string;
-  price: number;
-  image: string;
-  category: string;
-  description: string;
-  rating: number;
-  stock: number;
-}
+export const FlashSales: React.FC = () => {
+  const { data: products = [], isLoading, isError } = useGetProductsQuery();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-interface SaleProduct extends Product {
-  oldPrice?: number;
-  discountPercent?: number;
-  reviewsCount?: number;
-}
+  // Target date set to 3 days from component initialization for live demo
+  const targetDate = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 3);
+    return date;
+  }, []);
 
-const FLASH_SALE_PRODUCTS: SaleProduct[] = [
-  {
-    id: "1",
-    title: "HAVIT HV-G92 Gamepad",
-    price: 120,
-    oldPrice: 160,
-    discountPercent: 40,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Gamepad",
-    category: "gaming",
-    description: "",
-    rating: 5,
-    reviewsCount: 88,
-    stock: 12,
-  },
-  {
-    id: "2",
-    title: "AK-900 Wired Keyboard",
-    price: 960,
-    oldPrice: 1160,
-    discountPercent: 35,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Keyboard",
-    category: "accessories",
-    description: "",
-    rating: 4,
-    reviewsCount: 75,
-    stock: 8,
-  },
-  {
-    id: "3",
-    title: "IPS LCD Gaming Monitor",
-    price: 370,
-    oldPrice: 400,
-    discountPercent: 30,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Monitor",
-    category: "electronics",
-    description: "",
-    rating: 5,
-    reviewsCount: 99,
-    stock: 5,
-  },
-  {
-    id: "4",
-    title: "S-Series Comfort Chair",
-    price: 375,
-    oldPrice: 400,
-    discountPercent: 25,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Chair",
-    category: "furniture",
-    description: "",
-    rating: 5,
-    reviewsCount: 99,
-    stock: 3,
-  },
-  {
-    id: "5",
-    title: "S-Series Comfort Chair",
-    price: 375,
-    oldPrice: 400,
-    discountPercent: 25,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Chair",
-    category: "furniture",
-    description: "",
-    rating: 5,
-    reviewsCount: 99,
-    stock: 0,
-  },
-];
+  const { days, hours, minutes, seconds } = useCountdown(targetDate);
 
-function StarRating({ rating }: { rating: number }) {
-  const rounded = Math.round(rating);
-  return (
-    <div
-      className="flex items-center gap-0.5"
-      aria-label={`Rated ${rating} out of 5`}
-    >
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={cn(
-            "size-3.5",
-            i < rounded
-              ? "fill-amber-400 text-amber-400"
-              : "fill-muted text-muted",
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface ProductCardProps {
-  product: SaleProduct;
-  isWishlisted?: boolean;
-  onToggleWishlist?: (id: string) => void;
-  onQuickView?: (id: string) => void;
-  onAddToCart?: (id: string) => void;
-}
-
-function ProductCard({
-  product,
-  isWishlisted = false,
-  onToggleWishlist,
-  onQuickView,
-  onAddToCart,
-}: ProductCardProps) {
-  const {
-    id,
-    title,
-    price,
-    image,
-    oldPrice,
-    discountPercent,
-    rating,
-    reviewsCount,
-  } = product;
-
-  return (
-    <div className="group flex w-full flex-col gap-3">
-      <div className="relative aspect-square overflow-hidden rounded-md bg-secondary">
-        {discountPercent ? (
-          <span className="absolute top-3 left-3 z-10 rounded-sm bg-brand px-2.5 py-1 text-xs font-medium text-brand-foreground">
-            -{discountPercent}%
-          </span>
-        ) : null}
-
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5">
-          <button
-            type="button"
-            aria-label={
-              isWishlisted ? "Remove from wishlist" : "Add to wishlist"
-            }
-            aria-pressed={isWishlisted}
-            onClick={() => onToggleWishlist?.(id)}
-            className="flex size-7 items-center justify-center rounded-full bg-background text-foreground transition-colors hover:text-brand"
-          >
-            <Heart
-              className={cn("size-4", isWishlisted && "fill-brand text-brand")}
-            />
-          </button>
-          <button
-            type="button"
-            aria-label="Quick view"
-            onClick={() => onQuickView?.(id)}
-            className="flex size-7 items-center justify-center rounded-full bg-background text-foreground transition-colors hover:text-brand"
-          >
-            <Eye className="size-4" />
-          </button>
-        </div>
-
-        <img
-          src={image}
-          alt={title}
-          className="size-full object-cover"
-          loading="lazy"
-        />
-
-        <button
-          type="button"
-          onClick={() => onAddToCart?.(id)}
-          className="absolute inset-x-0 bottom-0 translate-y-full bg-foreground py-2 text-sm font-medium text-background transition-transform duration-200 group-hover:translate-y-0 group-focus-within:translate-y-0"
-        >
-          Add To Cart
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <p className="truncate text-sm font-medium">{title}</p>
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-brand">${price}</span>
-          {oldPrice ? (
-            <span className="text-sm text-muted-foreground line-through">
-              ${oldPrice}
-            </span>
-          ) : null}
-        </div>
-        <div className="flex items-center gap-2">
-          <StarRating rating={rating} />
-          {reviewsCount !== undefined ? (
-            <span className="text-xs text-muted-foreground">
-              ({reviewsCount})
-            </span>
-          ) : null}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function getTimeLeft(target: number) {
-  const diff = Math.max(target - Date.now(), 0);
-  return {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((diff / (1000 * 60)) % 60),
-    seconds: Math.floor((diff / 1000) % 60),
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 300;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
   };
-}
 
-function CountdownUnit({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex flex-col items-center gap-0">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-xl font-bold">
-        {String(value).padStart(2, "0")}
-      </span>
-    </div>
-  );
-}
-
-export function FlashSales() {
-  const [saleEndsAt] = useState(
-    () => Date.now() + (3 * 24 * 60 * 60 + 23 * 60 * 60) * 1000,
-  );
-  const [timeLeft, setTimeLeft] = useState(() => getTimeLeft(saleEndsAt));
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setTimeLeft(getTimeLeft(saleEndsAt)),
-      1000,
-    );
-    return () => clearInterval(interval);
-  }, [saleEndsAt]);
+  const formatNumber = (num: number) => num.toString().padStart(2, '0');
 
   return (
-    <section
-      aria-labelledby="flash-sales-heading"
-      className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-10"
-    >
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div className="flex flex-col gap-4">
-          <span className="w-fit rounded-sm bg-brand px-3 py-1 text-xs font-medium text-brand-foreground">
-            Today's
-          </span>
-          <div className="flex items-center gap-8">
-            <h2
-              id="flash-sales-heading"
-              className="text-2xl font-bold sm:text-3xl"
-            >
+    <section className="py-8  border-b border-gray-200">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-6 lg:gap-12">
+          {/* Section Indicator */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-10 bg-secondary-2 rounded-sm" />
+              <span className="text-secondary-2 font-semibold text-sm sm:text-base">
+                Today's
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-wide text-text-2">
               Flash Sales
             </h2>
-            <div className="flex items-center gap-3">
-              <CountdownUnit label="Days" value={timeLeft.days} />
-              <span className="text-xl font-bold text-brand">:</span>
-              <CountdownUnit label="Hours" value={timeLeft.hours} />
-              <span className="text-xl font-bold text-brand">:</span>
-              <CountdownUnit label="Minutes" value={timeLeft.minutes} />
-              <span className="text-xl font-bold text-brand">:</span>
-              <CountdownUnit label="Seconds" value={timeLeft.seconds} />
+          </div>
+
+          {/* Live Countdown Display */}
+          <div className="flex items-center gap-3 sm:gap-4 font-sans">
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-wider text-text-2 font-medium">Days</span>
+              <span className="text-2xl sm:text-3xl font-bold text-text-2">{formatNumber(days)}</span>
+            </div>
+            <span className="text-secondary-2 text-2xl font-bold mt-3">:</span>
+            
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-wider text-text-2 font-medium">Hours</span>
+              <span className="text-2xl sm:text-3xl font-bold text-text-2">{formatNumber(hours)}</span>
+            </div>
+            <span className="text-secondary-2 text-2xl font-bold mt-3">:</span>
+
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-wider text-text-2 font-medium">Minutes</span>
+              <span className="text-2xl sm:text-3xl font-bold text-text-2">{formatNumber(minutes)}</span>
+            </div>
+            <span className="text-secondary-2 text-2xl font-bold mt-3">:</span>
+
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-wider text-text-2 font-medium">Seconds</span>
+              <span className="text-2xl sm:text-3xl font-bold text-text-2">{formatNumber(seconds)}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full"
+        {/* Carousel Arrow Controls */}
+        <div className="flex items-center gap-2 self-end md:self-auto">
+          <button
+            onClick={() => scroll('left')}
             aria-label="Previous products"
+            className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-text-2 hover:bg-secondary-2 hover:text-white transition-colors duration-200"
           >
-            <ChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full"
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => scroll('right')}
             aria-label="Next products"
+            className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-text-2 hover:bg-secondary-2 hover:text-white transition-colors duration-200"
           >
-            <ChevronRight />
-          </Button>
+            <ArrowRight className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        {FLASH_SALE_PRODUCTS.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {/* Product Content Carousel */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className="h-72 bg-secondary animate-pulse rounded-md" />
+          ))}
+        </div>
+      ) : isError ? (
+        <div className="text-center py-10 text-secondary-2 font-medium">
+          Failed to load flash sale products. Please check server connection.
+        </div>
+      ) : products.length === 0 ? (
+        <div className="text-center py-10 text-text-1">No flash sale items available.</div>
+      ) : (
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {products.map((product) => (
+            <div key={product.id} className="min-w-[260px] sm:min-w-[270px] flex-shrink-0">
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      )}
 
-      <div className="flex justify-center pt-6">
-        <Button className="bg-brand px-10 text-brand-foreground hover:bg-brand/90">
+      {/* View All Products CTA */}
+      <div className="mt-10 text-center">
+        <Link
+          to="/category/gaming"
+          className="inline-block bg-secondary-2 text-text font-medium text-base px-12 py-4 rounded hover:bg-btn-hover transition-colors duration-200"
+        >
           View All Products
-        </Button>
+        </Link>
       </div>
-
-      <hr className="mt-6 border-border" />
     </section>
   );
-}
+};

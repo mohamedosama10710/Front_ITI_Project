@@ -118,8 +118,8 @@ export function Footer() {
     <>
       <ScrollToTopButton />
 
-      <footer className="bg-foreground text-background">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-10 px-4 py-16 sm:grid-cols-3 lg:grid-cols-5">
+      <footer className="w-full bg-black text-white">
+        <div className="container mx-auto grid grid-cols-2 gap-10  py-16 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 flex flex-col gap-5 sm:col-span-1">
             <a href="/" className="text-lg font-bold">
               Bab Rizk
