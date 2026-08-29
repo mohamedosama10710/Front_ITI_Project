@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NavLink } from "react-router-dom";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -39,10 +40,11 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header>
-      {}
-      <div className="bg-foreground text-background">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-2.5 text-sm">
+    <header className="w-full ">
+      <div className=" bg-black text-white">
+        <div className="flex container  items-center justify-between   text-sm">
+          <div>
+          </div>
           <p className="text-center">
             Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{" "}
             <a
@@ -52,7 +54,6 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
               ShopNow
             </a>
           </p>
-          {}
           <button
             type="button"
             className="ml-6 hidden shrink-0 items-center gap-1 text-sm sm:flex"
@@ -63,9 +64,9 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
         </div>
       </div>
 
-      {}
+      { }
       <div className="border-b border-border">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5">
+        <div className=" flex container items-center justify-between   py-5">
           <a href="/" className="text-xl font-bold">
             Bab Rizk
           </a>
@@ -73,29 +74,28 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
           <nav aria-label="Main" className="hidden lg:block">
             <ul className="flex items-center gap-8 text-sm">
               {NAV_LINKS.map(({ label, href }) => {
-                const isHome = href === "/";
+               
                 return (
                   <li key={href}>
-                    <a
-                      href={href}
-                      aria-current={isHome ? "page" : undefined}
-                      className={cn(
+                    <NavLink
+                      to={href}
+                      className={({isActive}) => cn(
                         "pb-1",
-                        isHome
+                        isActive
                           ? "border-b border-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground",
                       )}
                     >
                       {label}
-                    </a>
+                    </NavLink>
                   </li>
                 );
               })}
             </ul>
           </nav>
 
-          <div className="flex items-center gap-5">
-            <label className="relative hidden md:block">
+          <div className="flex items-center gap-5 ">
+            <label className="relative hidden md:block bg-secondary2 rounded-sm">
               <span className="sr-only">Search products</span>
               <input
                 type="search"

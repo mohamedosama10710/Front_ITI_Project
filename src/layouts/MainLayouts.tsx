@@ -4,7 +4,8 @@ import { Outlet } from "react-router-dom";
 
 const MainLayouts = () => {
     return (
-        <div>
+        <div className="flexLayout">
+
             <Navbar />
             <Outlet />
             <Footer />
