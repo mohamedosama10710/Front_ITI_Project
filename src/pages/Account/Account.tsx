@@ -168,20 +168,20 @@ export default function Account() {
   }
 
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-10">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <main className="mx-auto flex container   flex-col gap-8 px-4 py-10">
+      <div className="flex flex-wrap items-center justify-between mt-2 gap-2">
         <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
           Home / <span className="font-medium text-foreground">My Account</span>
         </nav>
         <p className="text-sm">
           Welcome!{" "}
           <span className="text-brand">
-            {CURRENT_USER.firstName} {CURRENT_USER.lastName}
+           Muhammed Sallam
           </span>
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[240px_1fr]">
+      <div className="grid grid-cols-1 gap-12 mt-4 mb-10 lg:grid-cols-[240px_1fr]">
         <AccountSidebar />
 
         <div className="rounded border border-border p-8">
@@ -244,13 +244,13 @@ export default function Account() {
             </div>
 
             <div className="flex items-center justify-end gap-6">
-              <button type="button" onClick={() => reset()} className="text-sm">
+              <button type="button" className="cursor-pointer text-sm">
                 Cancel
               </button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-brand text-brand-foreground hover:bg-brand/90"
+                className="bg-btn-2 cursor-pointer  px-8 py-5 text-white hover:bg-btn-hover"
               >
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
