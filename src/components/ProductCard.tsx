@@ -1,5 +1,6 @@
 import React from 'react';
-import { Heart, Eye, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Heart, Eye, Star, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
 import { addToCart } from '@/store/slices/cartSlice';
 import { toggleWishlist } from '@/store/slices/wishlistSlice';
@@ -7,9 +8,14 @@ import type { Product } from '@/types/product.types';
 
 interface ProductCardProps {
   product: Product;
+  variant?: 'default' | 'wishlist'; // لتحديد وضع الكارت
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ 
+  product, 
+  variant = 'default' 
+}) => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const isWishlisted = wishlistItems.some((item) => item.id === product.id);
@@ -17,6 +23,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(addToCart({ product, quantity: 1 }));
+    // إذا كان كارت wishlist يتم التوجيه للسلة فوراً
+    if (variant === 'wishlist') {
+      navigate('/cart');
+    }
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
@@ -24,7 +34,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     dispatch(toggleWishlist(product));
   };
 
-  // Render static 5-star rating layout
+  const handleNavigateToDetails = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   const renderStars = () => {
     return Array.from({ length: 5 }).map((_, idx) => (
       <Star
@@ -38,46 +51,71 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ));
   };
 
+  const imageUrl = product.image.startsWith('/') || product.image.startsWith('http')
+    ? product.image
+    : `/${product.image}`;
+
   return (
-    <div className="group relative w-full  flex flex-col font-sans select-none">
+    <div className="group relative w-full flex flex-col font-sans select-none">
       {/* Upper Card Box */}
       <div className="relative w-full aspect-[4/3] sm:aspect-square bg-[#F5F5F5] rounded-md overflow-hidden flex items-center justify-center p-6">
         {/* Discount Badge */}
         {product.discountPercentage && (
-          <span className="absolute top-3 left-3 bg-[#DB4444] text-white text-xs font-normal px-3 py-1 rounded">
+          <span className="absolute top-3 left-3 bg-[#DB4444] text-white text-xs font-normal px-3 py-1 rounded z-10">
             -{product.discountPercentage}%
           </span>
         )}
 
-        {/* Action Buttons (Wishlist & Quick View) */}
+        {/* Action Buttons */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
-          <button
-            onClick={handleToggleWishlist}
-            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-            className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:bg-[#DB4444] hover:text-white transition-colors duration-200 shadow-sm"
-          >
-            <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-[#DB4444] text-[#DB4444] group-hover:text-white group-hover:fill-white' : ''}`} />
-          </button>
-          <button
-            aria-label="Quick view product details"
-            className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:bg-[#DB4444] hover:text-white transition-colors duration-200 shadow-sm"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
+          {variant === 'wishlist' ? (
+            /* زر الحذف لصفحة الـ Wishlist فقط */
+            <button
+              onClick={handleToggleWishlist}
+              aria-label="Remove from wishlist"
+              className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:bg-[#DB4444] hover:text-white transition-colors duration-200 shadow-sm cursor-pointer"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          ) : (
+            /* أزرار الصفحة الرئيسية والأقسام */
+            <>
+              <button
+                onClick={handleToggleWishlist}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 shadow-sm cursor-pointer ${
+                  isWishlisted 
+                    ? 'bg-[#DB4444] text-white' 
+                    : 'bg-white text-black hover:bg-[#DB4444] hover:text-white'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-white' : ''}`} />
+              </button>
+              
+              <button
+                onClick={handleNavigateToDetails}
+                aria-label="Quick view product details"
+                className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:bg-[#DB4444] hover:text-white transition-colors duration-200 shadow-sm cursor-pointer"
+              >
+                <Eye className="w-4 h-4" />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Product Image */}
         <img
-          src={product.image}
+          src={imageUrl}
           alt={product.title}
-          className="max-h-full max-w-[190px] object-contain transition-transform duration-300 group-hover:scale-105"
+          onClick={handleNavigateToDetails}
+          className="max-h-full max-w-[190px] object-contain transition-transform duration-300 group-hover:scale-105 cursor-pointer"
           loading="lazy"
         />
 
-        {/* Add To Cart Button — Desktop Hover / Touch Mobile Visible */}
+        {/* Add To Cart Button */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-0 left-0 right-0 bg-black text-white text-sm font-medium py-2.5 transition-all duration-300 opacity-100 sm:opacity-0 group-hover:opacity-100 translate-y-0 sm:translate-y-2 group-hover:translate-y-0 flex items-center justify-center"
+          className="absolute bottom-0 left-0 right-0 bg-black text-white text-sm font-medium py-2.5 transition-all duration-300 opacity-100 sm:opacity-0 group-hover:opacity-100 translate-y-0 sm:translate-y-2 group-hover:translate-y-0 flex items-center justify-center z-10 cursor-pointer hover:bg-[#DB4444]"
         >
           Add To Cart
         </button>
@@ -85,7 +123,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Product Details */}
       <div className="mt-4 flex flex-col gap-1.5 text-left">
-        <h3 className="font-semibold text-base text-black truncate group-hover:text-[#DB4444] transition-colors">
+        <h3 
+          onClick={handleNavigateToDetails}
+          className="font-semibold text-base text-black truncate group-hover:text-[#DB4444] transition-colors cursor-pointer"
+        >
           {product.title}
         </h3>
 

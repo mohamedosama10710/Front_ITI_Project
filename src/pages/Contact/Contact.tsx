@@ -28,7 +28,7 @@ export const ContactPage: React.FC = () => {
         Home / <span className="text-black font-medium">Contact</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
         {/* Left Side: Contact Info */}
         <div className="lg:col-span-4 bg-white p-8 rounded shadow-sm border border-gray-100 space-y-8">
           <div className="space-y-4">

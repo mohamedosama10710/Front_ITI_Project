@@ -26,20 +26,23 @@ export const HeroSection: React.FC = () => {
 
     const categories = dynamicCategories.length > 0 ? dynamicCategories : defaultCategories;
 
+    console.log(dynamicCategories);
+
+
     return (
         <section className="pt-2 sm:pt-4 pb-6 sm:pb-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
 
                 {/* Category Sidebar */}
-                <aside className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6 flex flex-col justify-between pt-2">
+                <aside className="lg:col-span-2 lg:border-r border-gray-200 lg:pr-6  pt-2">
                     {isLoading ? (
-                        <div className="space-y-3 animate-pulse">
+                        <div className="space-y-3 animate-pulse flex flex-row lg:flex-col  justify-between">
                             {Array.from({ length: 8 }).map((_, i) => (
                                 <div key={i} className="h-5 bg-secondary rounded w-3/4"></div>
                             ))}
                         </div>
                     ) : (
-                        <ul className="space-y-3 text-sm sm:text-base font-normal text-text-2">
+                        <ul className="space-y-3 text-sm sm:text-base font-normal flex flex-row lg:flex-col  justify-between text-text-2">
                             {categories.map((category) => {
                                 const hasSubcategories =
                                     category === "Woman's Fashion" || category === "Men's Fashion";

@@ -37,7 +37,7 @@ interface FieldProps {
 
 function Field({ label, type = "text", error, registration }: FieldProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 ">
       <label className="relative">
         <span className="sr-only">{label}</span>
         <input
@@ -46,13 +46,13 @@ function Field({ label, type = "text", error, registration }: FieldProps) {
           placeholder={label}
           aria-invalid={!!error}
           aria-describedby={error ? `${registration.name}-error` : undefined}
-          className="w-full border-b border-border bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
+          className="w-full border-b border-border bg-transparent py-2 px-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-foreground"
         />
       </label>
       {error ? (
         <p
           id={`${registration.name}-error`}
-          className="text-xs text-destructive"
+          className="text-xs text-red-500"
         >
           {error}
         </p>
@@ -84,7 +84,7 @@ export default function Login() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-7xl items-center">
+    <main className="mx-auto flex min-h-[calc(100vh-5rem)] container items-center">
       <div className="hidden h-full flex-1 items-center justify-center bg-secondary lg:flex">
         <img src={authHero} alt="" className="size-full object-cover" />
       </div>
@@ -126,11 +126,11 @@ export default function Login() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-brand text-brand-foreground hover:bg-brand/90"
+              className=" text-white bg-btn-2 hover:bg-btn-hover px-8 py-6  text-md "
             >
               {isSubmitting ? "Logging in..." : "Log In"}
             </Button>
-            <a href="/forgot-password" className="text-sm text-destructive">
+            <a href="/forgot-password" className="text-sm text-secondary-2">
               Forget Password?
             </a>
           </div>
