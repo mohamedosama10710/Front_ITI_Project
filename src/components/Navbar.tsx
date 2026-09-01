@@ -1,17 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu } from "@base-ui/react/menu";
 import {
   ChevronDown,
   Heart,
-  LogOut,
   Menu as MenuIcon,
-  Package,
   Search,
   ShoppingCart,
-  Star,
   User,
   X,
-  XCircle,
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,25 +22,16 @@ const NAV_LINKS = [
   { label: "Sign Up", href: "/signup" },
 ];
 
-const ACCOUNT_MENU_ITEMS = [
-  { label: "Manage My Account", icon: User },
-  { label: "My Order", icon: Package },
-  { label: "My Cancellations", icon: XCircle },
-  { label: "My Reviews", icon: Star },
-  { label: "Logout", icon: LogOut },
-];
-
 interface NavbarProps {
   cartCount?: number;
   isLoggedIn?: boolean;
 }
 
-export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
+export function Navbar({ cartCount = 0, isLoggedIn = true }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // تم إنشاء Ref منفصل للـ Desktop والـ Mobile لمنع إغلاق القائمة بالخطأ
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -68,7 +54,6 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
         mobileSearchRef.current &&
         !mobileSearchRef.current.contains(event.target as Node);
 
-      // إغلاق القائمة فقط إذا كان النقر خارج كلا العنصرين
       if (
         (isOutsideDesktop || !desktopSearchRef.current) &&
         (isOutsideMobile || !mobileSearchRef.current)
@@ -114,7 +99,7 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
           </p>
           <button
             type="button"
-            className="ml-6 hidden shrink-0 items-center gap-1 text-sm sm:flex"
+            className="ml-6 hidden shrink-0 items-center gap-1 text-sm sm:flex cursor-pointer"
           >
             English
             <ChevronDown className="size-3.5" />
@@ -125,9 +110,9 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
       {/* Main Navigation */}
       <div className="border-b border-border">
         <div className="flex container items-center justify-between py-5">
-          <a href="/" className="text-xl font-bold">
-            <Logo/>
-          </a>
+          <NavLink to="/" className="text-xl font-bold">
+            <Logo />
+          </NavLink>
 
           <nav aria-label="Main" className="hidden lg:block">
             <ul className="flex items-center gap-8 text-sm">
@@ -152,7 +137,7 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
           </nav>
 
           <div className="flex items-center gap-5">
-            {/* Desktop Live Search Container */}
+            {/* Live Search Container */}
             <div ref={desktopSearchRef} className="relative hidden md:block">
               <form onSubmit={handleSearchSubmit} className="relative">
                 <span className="sr-only">Search products</span>
@@ -222,19 +207,19 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
             </div>
 
             {/* Wishlist Link */}
-            <a
-              href="/wishlist"
+            <NavLink
+              to="/wishlist"
               aria-label="Wishlist"
-              className="hover:text-brand"
+              className="hover:text-brand cursor-pointer"
             >
               <Heart className="size-5" />
-            </a>
+            </NavLink>
 
             {/* Cart Link */}
-            <a
-              href="/cart"
+            <NavLink
+              to="/cart"
               aria-label={`Cart, ${cartCount} items`}
-              className="relative hover:text-brand"
+              className="relative hover:text-brand cursor-pointer"
             >
               <ShoppingCart className="size-5" />
               {cartCount > 0 ? (
@@ -242,34 +227,16 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
                   {cartCount}
                 </span>
               ) : null}
-            </a>
+            </NavLink>
 
-            {/* User Account Menu */}
-            {isLoggedIn ? (
-              <Menu.Root>
-                <Menu.Trigger
-                  aria-label="Account menu"
-                  className="flex size-8 items-center justify-center rounded-full bg-brand text-brand-foreground"
-                >
-                  <User className="size-4" />
-                </Menu.Trigger>
-                <Menu.Portal>
-                  <Menu.Positioner align="end" sideOffset={8}>
-                    <Menu.Popup className="min-w-56 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md">
-                      {ACCOUNT_MENU_ITEMS.map(({ label, icon: Icon }) => (
-                        <Menu.Item
-                          key={label}
-                          className="flex cursor-pointer items-center gap-2.5 rounded-sm px-3 py-2 text-sm outline-none data-[highlighted]:bg-muted"
-                        >
-                          <Icon className="size-4" />
-                          {label}
-                        </Menu.Item>
-                      ))}
-                    </Menu.Popup>
-                  </Menu.Positioner>
-                </Menu.Portal>
-              </Menu.Root>
-            ) : null}
+            {/* User Account Icon - Navigates directly to /account */}
+            <NavLink
+              to="/account"
+              aria-label="Account"
+              className="flex size-8 items-center justify-center rounded-full bg-brand text-brand-foreground hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              <User className="size-5" />
+            </NavLink>
 
             {/* Mobile Menu Toggle Button */}
             <button
@@ -277,7 +244,7 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen((open) => !open)}
-              className="lg:hidden"
+              className="lg:hidden cursor-pointer"
             >
               {mobileOpen ? (
                 <X className="size-5" />
@@ -288,7 +255,7 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
           </div>
         </div>
 
-        {/* Mobile Navigation and Search */}
+        {/* Mobile Navigation */}
         {mobileOpen ? (
           <nav
             aria-label="Mobile"
@@ -297,79 +264,16 @@ export function Navbar({ cartCount = 0, isLoggedIn = false }: NavbarProps) {
             <ul className="flex flex-col gap-4 text-sm">
               {NAV_LINKS.map(({ label, href }) => (
                 <li key={href}>
-                  <a href={href}>{label}</a>
+                  <NavLink
+                    to={href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block text-foreground hover:text-brand"
+                  >
+                    {label}
+                  </NavLink>
                 </li>
               ))}
             </ul>
-
-            {/* Mobile Search Container */}
-            <div ref={mobileSearchRef} className="relative mt-4 block md:hidden">
-              <form onSubmit={handleSearchSubmit} className="relative">
-                <span className="sr-only">Search products</span>
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setShowDropdown(true);
-                  }}
-                  onFocus={() => setShowDropdown(true)}
-                  placeholder="What are you looking for?"
-                  className="w-full rounded-sm bg-secondary py-2 pr-9 pl-3 text-sm outline-none placeholder:text-muted-foreground"
-                />
-                <button
-                  type="submit"
-                  aria-label="Search"
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground"
-                >
-                  <Search className="size-4" />
-                </button>
-              </form>
-
-              {/* Mobile Live Search Dropdown */}
-              {showDropdown && searchQuery.trim().length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-2 max-h-60 overflow-y-auto rounded-md border border-border bg-popover z-50 p-2 shadow-lg bg-white">
-                  {isLoading ? (
-                    <div className="flex items-center justify-center p-3 text-xs text-muted-foreground">
-                      <Loader2 className="size-4 animate-spin mr-2" />
-                      <span>Loading...</span>
-                    </div>
-                  ) : filteredProducts.length > 0 ? (
-                    <ul className="flex flex-col gap-1">
-                      {filteredProducts.map((product: any) => (
-                        <li key={product.id}>
-                          <button
-                            type="button"
-                            onClick={() => handleSelectProduct(product.id)}
-                            className="flex w-full items-center gap-3 rounded-sm p-2 text-left hover:bg-secondary-2 hover:text-white transition-colors cursor-pointer"
-                          >
-                            {product.image || product.thumbnail ? (
-                              <img
-                                src={product.image || product.thumbnail}
-                                alt={product.title || product.name}
-                                className="size-8 object-contain rounded bg-white"
-                              />
-                            ) : null}
-                            <div className="flex flex-col overflow-hidden">
-                              <span className="text-sm font-medium truncate">
-                                {product.title || product.name}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                ${product.price}
-                              </span>
-                            </div>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="p-2 text-center text-xs text-muted-foreground">
-                      No products found
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
           </nav>
         ) : null}
       </div>

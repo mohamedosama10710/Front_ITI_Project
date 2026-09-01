@@ -183,21 +183,21 @@ export function Footer() {
                 aria-hidden
                 className="flex size-16 shrink-0 items-center justify-center rounded-sm bg-primary-foreground/10 text-[10px] text-primary-foreground/50"
               >
-                QR
+                <img className="w-16 h-16" src="/logos/Qr.jpg" alt="" />
               </div>
               <div className="flex flex-col gap-1.5">
                 {}
                 <a
                   href="#"
-                  className="flex items-center gap-1.5 rounded-sm border border-primary-foreground/40 px-2 py-1 text-[11px]"
+                  className="flex  items-center gap-1.5 rounded-sm border border-primary-foreground/40 px-2 py-1 text-[11px]"
                 >
-                  Get it on <span className="font-medium">Google Play</span>
+                  <img className="w-full" src="/logos/playstore.svg" alt="" />
                 </a>
                 <a
                   href="#"
                   className="flex items-center gap-1.5 rounded-sm border border-primary-foreground/40 px-2 py-1 text-[11px]"
                 >
-                  Download on <span className="font-medium">App Store</span>
+                  <img className="w-full" src="/logos/appstore.svg" alt="" />
                 </a>
               </div>
             </div>
