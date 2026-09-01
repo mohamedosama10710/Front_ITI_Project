@@ -10,6 +10,22 @@ export const Cart: React.FC = () => {
   const cartItems = useAppSelector((state) => state.cart.items);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  // في Cart.tsx فوق الـ return الأساسي:
+
+if (cartItems.length === 0) {
+  return (
+    <div className="container mx-auto px-4 py-16 text-center space-y-6">
+      <h2 className="text-3xl font-bold">Your Cart is Empty</h2>
+      <p className="text-gray-500">You haven't added any items to your cart yet.</p>
+      <Link
+        to="/"
+        className="inline-block bg-[#DB4444] text-white px-8 py-3.5 rounded text-sm font-medium hover:bg-[#b93333] transition"
+      >
+        Return To Shop
+      </Link>
+    </div>
+  );
+}
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-10">

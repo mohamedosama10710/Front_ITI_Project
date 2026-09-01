@@ -124,7 +124,7 @@ export const FlashSales: React.FC = () => {
       {/* View All Products CTA */}
       <div className="mt-10 text-center">
         <Link
-          to="/category/gaming"
+          to="/category/all"
           className="inline-block bg-secondary-2 text-text font-medium text-base px-12 py-4 rounded hover:bg-btn-hover transition-colors duration-200"
         >
           View All Products

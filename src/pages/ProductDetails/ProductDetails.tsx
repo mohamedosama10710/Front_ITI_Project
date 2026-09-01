@@ -83,7 +83,7 @@ export const ProductDetails: React.FC = () => {
 
         {/* Main Product Image */}
         <div className="lg:col-span-5 bg-[#F5F5F5] rounded-md p-8 flex items-center justify-center order-1 lg:order-2 min-h-[500px]">
-          <img src={imageUrl} alt={product.title} className="w-[250px] h-[250px] object-contain " />
+          <img src={imageUrl} alt={product.title} className="w-[250px] h-[250px] object-contain mix-blend-multiply  " />
         </div>
 
         {/* Product Details Info */}

@@ -24,9 +24,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     e.stopPropagation();
     dispatch(addToCart({ product, quantity: 1 }));
     // إذا كان كارت wishlist يتم التوجيه للسلة فوراً
-    if (variant === 'wishlist') {
-      navigate('/cart');
-    }
+   navigate('/cart');
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
@@ -108,7 +106,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           src={imageUrl}
           alt={product.title}
           onClick={handleNavigateToDetails}
-          className="max-h-full max-w-[190px] object-contain transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+          className="max-h-full max-w-[190px] object-contain transition-transform duration-300 group-hover:scale-105 cursor-pointer mix-blend-multiply"
           loading="lazy"
         />
 
