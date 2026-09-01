@@ -119,7 +119,7 @@ function TeamCarousel() {
         {TEAM.map(({ name, role }, index) => (
           <div
             key={name}
-            className="flex w-[85%] shrink-0 snap-start flex-col gap-3 sm:w-[45%] lg:w-[calc(33.333%-1.4rem)]"
+            className="flex  shrink-0 snap-start flex-col gap-3 "
           >
             <div className="h-[350px] overflow-hidden rounded bg-secondary">
               <img
@@ -176,7 +176,7 @@ function TeamCarousel() {
 
 export default function About() {
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-20 px-4 py-10">
+    <main className="mx-auto flex container flex-col gap-20 px-4 py-10">
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
         <a href="/" className="hover:text-foreground">
           Home

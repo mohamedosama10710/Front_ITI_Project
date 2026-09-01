@@ -18,6 +18,7 @@ import { NavLink } from "react-router-dom";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
+  { label: "category", href: "/category/all" },
   { label: "Contact", href: "/contact" },
   { label: "About", href: "/about" },
   { label: "Sign Up", href: "/signup" },

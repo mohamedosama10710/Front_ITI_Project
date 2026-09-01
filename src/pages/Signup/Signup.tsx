@@ -78,7 +78,7 @@ function Field({ label, type = "text", error, registration }: FieldProps) {
       {error ? (
         <p
           id={`${registration.name}-error`}
-          className="text-xs text-destructive"
+          className="text-xs text-red-500"
         >
           {error}
         </p>
@@ -110,7 +110,7 @@ export default function Signup() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-7xl items-center">
+    <main className="mx-auto flex min-h-[calc(100vh-5rem)] container items-center">
       <div className="hidden h-full flex-1 items-center justify-center bg-secondary lg:flex">
         <img src={authHero} alt="" className="size-full object-cover" />
       </div>
@@ -156,7 +156,7 @@ export default function Signup() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-brand text-brand-foreground hover:bg-brand/90"
+                className="bg-btn-2 text-white hover:bg-btn-hover px-8 py-6  text-md "
               >
                 {isSubmitting ? "Creating account..." : "Create Account"}
               </Button>

@@ -1,276 +1,136 @@
-import { useState } from "react";
-import { Eye, ShoppingCart, Star, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Trash2, ShoppingCart } from 'lucide-react';
+import { useAppDispatch, useAppSelector } from '@/hooks/hooks';
+import { toggleWishlist } from '@/store/slices/wishlistSlice';
+import { addToCart } from '@/store/slices/cartSlice';
+import { useGetProductsQuery } from '@/store/api/productApi';
+import { ProductCard } from '@/components/ProductCard';
 
-// --- Data --------------------------------------------------------------------
-// Temporary mock data + local state. Once the wishlist Redux slice exists,
-// this page will read/dispatch from the store instead.
+export const Wishlist: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  
+  // جلب كل المنتجات لعرض قسم Just For You (أول 4 منتجات كمثال)
+  const { data: allProducts } = useGetProductsQuery();
+  const justForYouProducts = allProducts?.slice(0, 4) || [];
 
-interface WishlistItem {
-  id: string;
-  title: string;
-  price: number;
-  oldPrice?: number;
-  image: string;
-}
-
-interface SuggestedProduct {
-  id: string;
-  title: string;
-  price: number;
-  oldPrice?: number;
-  isNew?: boolean;
-  rating: number;
-  reviewsCount: number;
-  image: string;
-}
-
-const SUGGESTED_PRODUCTS: SuggestedProduct[] = [
-  {
-    id: "s1",
-    title: "ASUS FHD Gaming Laptop",
-    price: 960,
-    oldPrice: 1160,
-    rating: 5,
-    reviewsCount: 65,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Laptop",
-  },
-  {
-    id: "s2",
-    title: "IPS LCD Gaming Monitor",
-    price: 1160,
-    rating: 5,
-    reviewsCount: 65,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Monitor",
-  },
-  {
-    id: "s3",
-    title: "HAVIT HV-G92 Gamepad",
-    price: 560,
-    isNew: true,
-    rating: 5,
-    reviewsCount: 65,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Gamepad",
-  },
-  {
-    id: "s4",
-    title: "AK-900 Wired Keyboard",
-    price: 200,
-    rating: 5,
-    reviewsCount: 65,
-    image: "https://placehold.co/300x300/f5f5f5/1a1a1a?text=Keyboard",
-  },
-];
-
-function discountPercent(price: number, oldPrice?: number) {
-  if (!oldPrice || oldPrice <= price) return undefined;
-  return Math.round(((oldPrice - price) / oldPrice) * 100);
-}
-
-function StarRating({ rating }: { rating: number }) {
-  const rounded = Math.round(rating);
-  return (
-    <div
-      className="flex items-center gap-0.5"
-      aria-label={`Rated ${rating} out of 5`}
-    >
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={cn(
-            "size-3.5",
-            i < rounded
-              ? "fill-amber-400 text-amber-400"
-              : "fill-muted text-muted",
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
-// --- Wishlist item card -------------------------------------------------------
-
-function WishlistCard({
-  item,
-  onRemove,
-}: {
-  item: WishlistItem;
-  onRemove: (id: string) => void;
-}) {
-  const discount = discountPercent(item.price, item.oldPrice);
+  // نقل جميع عناصر الـ Wishlist إلى السلة
+  const handleMoveAllToBag = () => {
+    wishlistItems.forEach((product) => {
+      dispatch(addToCart({ product, quantity: 1 }));
+    });
+  };
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="relative aspect-square overflow-hidden rounded-md bg-secondary">
-        {discount ? (
-          <span className="absolute top-3 left-3 z-10 rounded-sm bg-brand px-2.5 py-1 text-xs font-medium text-brand-foreground">
-            -{discount}%
-          </span>
-        ) : null}
-
-        <button
-          type="button"
-          aria-label={`Remove ${item.title} from wishlist`}
-          onClick={() => onRemove(item.id)}
-          className="absolute top-3 right-3 z-10 flex size-7 items-center justify-center rounded-full bg-background text-foreground hover:text-destructive"
-        >
-          <Trash2 className="size-4" />
-        </button>
-
-        <img
-          src={item.image}
-          alt={item.title}
-          className="size-full object-cover"
-          loading="lazy"
-        />
-
-        <button
-          type="button"
-          className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-foreground py-2 text-sm font-medium text-background"
-        >
-          <ShoppingCart className="size-4" />
-          Add To Cart
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <p className="truncate text-sm font-medium">{item.title}</p>
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-brand">${item.price}</span>
-          {item.oldPrice ? (
-            <span className="text-sm text-muted-foreground line-through">
-              ${item.oldPrice}
-            </span>
-          ) : null}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- Suggested product card ---------------------------------------------------
-
-function SuggestionCard({ product }: { product: SuggestedProduct }) {
-  const discount = discountPercent(product.price, product.oldPrice);
-
-  return (
-    <div className="group flex flex-col gap-3">
-      <div className="relative aspect-square overflow-hidden rounded-md bg-secondary">
-        {discount ? (
-          <span className="absolute top-3 left-3 z-10 rounded-sm bg-brand px-2.5 py-1 text-xs font-medium text-brand-foreground">
-            -{discount}%
-          </span>
-        ) : product.isNew ? (
-          <span className="absolute top-3 left-3 z-10 rounded-sm bg-emerald-500 px-2.5 py-1 text-xs font-medium text-white">
-            NEW
-          </span>
-        ) : null}
-
-        <button
-          type="button"
-          aria-label="Quick view"
-          className="absolute top-3 right-3 z-10 flex size-7 items-center justify-center rounded-full bg-background text-foreground hover:text-brand"
-        >
-          <Eye className="size-4" />
-        </button>
-
-        <img
-          src={product.image}
-          alt={product.title}
-          className="size-full object-cover"
-          loading="lazy"
-        />
-
-        <button
-          type="button"
-          className="absolute inset-x-0 bottom-0 translate-y-full bg-foreground py-2 text-sm font-medium text-background transition-transform duration-200 group-hover:translate-y-0 group-focus-within:translate-y-0"
-        >
-          Add To Cart
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <p className="truncate text-sm font-medium">{product.title}</p>
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-brand">
-            ${product.price}
-          </span>
-          {product.oldPrice ? (
-            <span className="text-sm text-muted-foreground line-through">
-              ${product.oldPrice}
-            </span>
-          ) : null}
-        </div>
-        <div className="flex items-center gap-2">
-          <StarRating rating={product.rating} />
-          <span className="text-xs text-muted-foreground">
-            ({product.reviewsCount})
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- Page --------------------------------------------------------------------
-
-export default function Wishlist() {
-  // Starts empty: items only appear once the user actually adds them (e.g.
-  // via the heart icon on a product card elsewhere). Will be replaced by the
-  // wishlist Redux slice once it exists.
-  const [items, setItems] = useState<WishlistItem[]>([]);
-
-  function handleRemove(id: string) {
-    setItems((current) => current.filter((item) => item.id !== id));
-  }
-
-  function handleMoveAllToBag() {
-    // TODO: dispatch each item into the cart slice once it exists.
-    console.log("move all to bag:", items);
-  }
-
-  return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-14 px-4 py-10">
-      <section className="flex flex-col gap-6">
+    <div className="container mx-auto px-4 py-8 space-y-16">
+      {/* 1. Wishlist Header & Items */}
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-medium">Wishlist ({items.length})</h1>
-          {items.length > 0 ? (
-            <Button variant="outline" onClick={handleMoveAllToBag}>
-              Move All To Bag
-            </Button>
-          ) : null}
+          <h1 className="text-xl font-normal text-black">
+            Wishlist ({wishlistItems.length})
+          </h1>
+          <button
+            onClick={handleMoveAllToBag}
+            disabled={wishlistItems.length === 0}
+            className="px-8 py-3 border border-gray-400 rounded text-sm font-medium hover:bg-black hover:text-white transition disabled:opacity-50 cursor-pointer"
+          >
+            Move All To Bag
+          </button>
         </div>
 
-        {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Your wishlist is empty.
-          </p>
+        {wishlistItems.length === 0 ? (
+          <div className="text-center py-12 text-gray-500 text-base">
+            Your wishlist is currently empty.
+          </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {items.map((item) => (
-              <WishlistCard key={item.id} item={item} onRemove={handleRemove} />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {wishlistItems.map((product) => {
+              const imageUrl = product.image.startsWith('/') || product.image.startsWith('http')
+                ? product.image
+                : `/${product.image}`;
+
+              return (
+                <div key={product.id} className="group relative w-full flex flex-col font-sans select-none">
+                  {/* Upper Box */}
+                  <div className="relative w-full aspect-square bg-[#F5F5F5] rounded-md overflow-hidden flex items-center justify-center p-6">
+                    {/* Discount Badge */}
+                    {product.discountPercentage && (
+                      <span className="absolute top-3 left-3 bg-[#DB4444] text-white text-xs px-3 py-1 rounded">
+                        -{product.discountPercentage}%
+                      </span>
+                    )}
+
+                    {/* Trash Button */}
+                    <button
+                      onClick={() => dispatch(toggleWishlist(product))}
+                      aria-label="Remove from wishlist"
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:bg-[#DB4444] hover:text-white transition shadow-sm cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+
+                    {/* Image */}
+                    <img
+                      src={imageUrl}
+                      alt={product.title}
+                      className="max-h-full max-w-[180px] object-contain"
+                    />
+
+                    {/* Add To Cart Button */}
+                    <button
+                      onClick={() => dispatch(addToCart({ product, quantity: 1 }))}
+                      className="absolute bottom-0 left-0 right-0 bg-black text-white text-sm font-medium py-2.5 flex items-center justify-center gap-2 cursor-pointer hover:bg-[#DB4444] transition"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      Add To Cart
+                    </button>
+                  </div>
+
+                  {/* Info */}
+                  <div className="mt-4 flex flex-col gap-1.5 text-left">
+                    <h3 className="font-medium text-base text-black truncate">
+                      {product.title}
+                    </h3>
+                    <div className="flex items-center gap-3 text-base">
+                      <span className="text-[#DB4444] font-medium">${product.price}</span>
+                      {product.originalPrice && (
+                        <span className="text-gray-400 line-through text-sm">
+                          ${product.originalPrice}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
-      </section>
+      </div>
 
-      <section className="flex flex-col gap-6">
+      {/* 2. Just For You Section */}
+      <div className="space-y-8 pt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span className="h-6 w-2.5 rounded-sm bg-brand" aria-hidden />
-            <h2 className="text-xl font-medium">Just For You</h2>
+            <div className="w-4 h-8 bg-[#DB4444] rounded-sm" />
+            <h2 className="text-xl font-normal text-black">Just For You</h2>
           </div>
-          <Button variant="outline">See All</Button>
+          <Link
+            to="/"
+            className="px-8 py-3 border border-gray-400 rounded text-sm font-medium hover:bg-black hover:text-white transition"
+          >
+            See All
+          </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {SUGGESTED_PRODUCTS.map((product) => (
-            <SuggestionCard key={product.id} product={product} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {justForYouProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
-}
+};
+
+export default Wishlist;
