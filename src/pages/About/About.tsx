@@ -6,7 +6,7 @@ import {
   Store,
   Truck,
   Users,
-  Wallet,
+ // أو استخدام أيقونة حقيبة تسوق للـ Wallet
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,16 +16,25 @@ const STATS = [
   { icon: Store, value: "10.5k", label: "Sellers active our site" },
   { icon: DollarSign, value: "33k", label: "Monthly Product Sale" },
   { icon: Users, value: "45.5k", label: "Customer active in our site" },
-  { icon: Wallet, value: "25k", label: "Annual gross sale in our site" },
+  { icon: DollarSign, value: "25k", label: "Annual gross sale in our site" },
 ];
 
-// Placeholder team roster. Swap for the real team's names/photos/roles.
 const TEAM = [
-  { name: "Sarah Ahmed", role: "Founder & Chairman" },
-  { name: "Karim Hassan", role: "Managing Director" },
-  { name: "Layla Mostafa", role: "Product Designer" },
-  { name: "Omar Fathy", role: "Engineering Lead" },
-  { name: "Nour Ibrahim", role: "Marketing Lead" },
+  {
+    name: "Tom Cruise",
+    role: "Founder & Chairman",
+    image: "/header/image 46.jpg", // استبدل بمسار الصورة لديك
+  },
+  {
+    name: "Emma Watson",
+    role: "Managing Director",
+    image: "/header/image 51.jpg", // استبدل بمسار الصورة لديك
+  },
+  {
+    name: "Will Smith",
+    role: "Product Designer",
+    image: "/header/image 47.jpg", // استبدل بمسار الصورة لديك
+  },
 ];
 
 const FEATURES = [
@@ -46,8 +55,6 @@ const FEATURES = [
   },
 ];
 
-// lucide-react has no brand logos, so these are small local SVGs (same
-// approach used in Footer.tsx).
 function TwitterIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -82,88 +89,56 @@ function LinkedinIcon(props: SVGProps<SVGSVGElement>) {
 
 const TEAM_SOCIAL_ICONS = [TwitterIcon, InstagramIcon, LinkedinIcon];
 
-// --- Team carousel -------------------------------------------------------
+// --- Team Carousel / Grid ----------------------------------------------------
 
-function TeamCarousel() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  function scrollToIndex(index: number) {
-    const track = trackRef.current;
-    if (!track) return;
-    const card = track.children[index] as HTMLElement | undefined;
-    card?.scrollIntoView({
-      behavior: "smooth",
-      inline: "start",
-      block: "nearest",
-    });
-    setActiveIndex(index);
-  }
-
-  function handleScroll() {
-    const track = trackRef.current;
-    if (!track) return;
-    const cardWidth = track.children[0]?.clientWidth ?? 1;
-    const gap = 32; // matches gap-8 below
-    const index = Math.round(track.scrollLeft / (cardWidth + gap));
-    setActiveIndex(Math.min(index, TEAM.length - 1));
-  }
+function TeamSection() {
+  const [activeIndex, setActiveIndex] = useState(2); // النقطة الحمراء بالمنتصف كما بالصورة
 
   return (
-    <div className="flex flex-col gap-8">
-      <div
-        ref={trackRef}
-        onScroll={handleScroll}
-        className="flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {TEAM.map(({ name, role }, index) => (
-          <div
-            key={name}
-            className="flex  shrink-0 snap-start flex-col gap-3 "
-          >
-            <div className="h-[350px] overflow-hidden rounded bg-secondary">
+    <div className="flex flex-col gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {TEAM.map(({ name, role, image }) => (
+          <div key={name} className="flex flex-col gap-4 text-left">
+            <div className="h-[380px] w-full overflow-hidden rounded bg-[#F5F5F5] flex items-end justify-center">
               <img
-                src={`https://placehold.co/400x500/f5f5f5/1a1a1a?text=${encodeURIComponent(name)}`}
+                src={image}
                 alt={name}
-                className="size-full object-cover"
+                className="h-full object-contain mix-blend-multiply"
                 loading="lazy"
               />
             </div>
-            <h3 className="text-xl font-bold">{name}</h3>
-            <p className="text-sm text-muted-foreground">{role}</p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-1">
+              <h3 className="text-2xl font-bold tracking-wider">{name}</h3>
+              <p className="text-sm text-gray-600">{role}</p>
+            </div>
+            <div className="flex items-center gap-4">
               {TEAM_SOCIAL_ICONS.map((Icon, iconIndex) => (
                 <a
                   key={iconIndex}
                   href="#"
                   aria-label={`${name} on social media`}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-black hover:text-[#DB4444] transition-colors"
                 >
                   <Icon className="size-4" />
                 </a>
               ))}
             </div>
-            <span className="sr-only">{`Slide ${index + 1} of ${TEAM.length}`}</span>
           </div>
         ))}
       </div>
 
-      <div
-        className="flex items-center justify-center gap-2"
-        role="tablist"
-        aria-label="Team slides"
-      >
-        {TEAM.map((member, index) => (
+      {/* Pagination Dots */}
+      <div className="flex items-center justify-center gap-3">
+        {[0, 1, 2, 3, 4].map((index) => (
           <button
-            key={member.name}
+            key={index}
             type="button"
-            role="tab"
-            aria-selected={index === activeIndex}
-            aria-label={`Go to slide ${index + 1}`}
-            onClick={() => scrollToIndex(index)}
+            onClick={() => setActiveIndex(index)}
             className={cn(
-              "size-2.5 rounded-full transition-colors",
-              index === activeIndex ? "bg-brand" : "bg-border",
+              "size-3 rounded-full transition-all border",
+              index === activeIndex
+                ? "bg-[#DB4444] border-[#DB4444] outline outline-2 outline-offset-2 outline-[#DB4444]/30"
+                : "bg-gray-300 border-transparent"
             )}
           />
         ))}
@@ -172,86 +147,112 @@ function TeamCarousel() {
   );
 }
 
-// --- Page ------------------------------------------------------------------
+// --- Page Component ----------------------------------------------------------
 
 export default function About() {
   return (
-    <main className="mx-auto flex container flex-col gap-20 px-4 py-10">
-      <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
-        <a href="/" className="hover:text-foreground">
+    <main className="mx-auto flex container flex-col gap-28 px-4 sm:px-8 py-10">
+      {/* Breadcrumb */}
+      <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
+        <a href="/" className="hover:text-black">
           Home
         </a>{" "}
-        / <span className="font-medium text-foreground">About</span>
+        / <span className="font-medium text-black">About</span>
       </nav>
 
+      {/* Our Story Section */}
       <section className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-        <div className="flex flex-col gap-6">
-          <h1 className="text-4xl font-bold">Our Story</h1>
-          <p className="text-base leading-relaxed text-muted-foreground">
-            Launched in 2015, Bab Rizk is South Asia's premier online shopping
-            marketplace with an active presence in Bangladesh. Supported by a
-            wide range of tailored marketing, data, and service solutions, Bab
-            Rizk has 10,500 sellers and 300 brands and serves 3 million
-            customers across the region.
+        <div className="flex flex-col gap-8 max-w-xl">
+          <h1 className="text-4xl sm:text-5xl font-semibold tracking-wider">
+            Our Story
+          </h1>
+          <p className="text-base leading-relaxed text-black">
+            Launced in 2015, Exclusive is South Asia's premier online shopping
+            marketplace with an active presence in Bangladesh. Supported by wide
+            range of tailored marketing, data and service solutions, Exclusive
+            has 10,500 sellers and 300 brands and serves 3 millions customers
+            across the region.
           </p>
-          <p className="text-base leading-relaxed text-muted-foreground">
-            Bab Rizk has more than 1 million products to offer, growing at a
-            very fast pace. Bab Rizk offers a diverse assortment in categories
+          <p className="text-base leading-relaxed text-black">
+            Exclusive has more than 1 Million products to offer, growing at a
+            very fast. Exclusive offers a diverse assortment in categories
             ranging from consumer.
           </p>
         </div>
-        <img
-          src="https://placehold.co/700x460/f9a8c5/1a1a1a?text=Our+Story"
-          alt="Team members shopping together"
-          className="h-[400px] w-full rounded object-cover"
-        />
+        <div className="w-full h-[450px] overflow-hidden rounded">
+          <img
+            src="header/story.jpg" // ضع مسار صورة الفتاتين مع أكياس التسوق هنا
+            alt="Our Story Shopping"
+            className="size-full object-cover"
+          />
+        </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Stats Section */}
+      <section className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {STATS.map(({ icon: Icon, value, label }, index) => {
-          const highlighted = index === 1;
+          const highlighted = index === 1; // الكارت الثاني مميز باللون الأحمر
           return (
             <div
               key={label}
               className={cn(
-                "flex flex-col items-center gap-3 rounded border p-6 text-center",
+                "flex flex-col items-center justify-center gap-3 rounded border py-8 px-4 text-center transition-all group cursor-pointer",
                 highlighted
-                  ? "border-transparent bg-brand text-brand-foreground"
-                  : "border-border",
+                  ? "bg-[#DB4444] text-white border-[#DB4444] shadow-lg"
+                  : "border-gray-300 hover:bg-[#DB4444] hover:text-white hover:border-[#DB4444]"
               )}
             >
+              {/* Outer Ring Icon Frame */}
               <div
                 className={cn(
-                  "flex size-12 items-center justify-center rounded-full",
+                  "flex size-16 items-center justify-center rounded-full transition-colors",
                   highlighted
-                    ? "bg-brand-foreground/15"
-                    : "bg-foreground text-background",
+                    ? "bg-white/30 text-white"
+                    : "bg-gray-300 text-black group-hover:bg-white/30 group-hover:text-white"
                 )}
               >
-                <Icon className="size-5" />
+                <div
+                  className={cn(
+                    "flex size-11 items-center justify-center rounded-full transition-colors",
+                    highlighted
+                      ? "bg-white text-black"
+                      : "bg-black text-white group-hover:bg-white group-hover:text-black"
+                  )}
+                >
+                  <Icon className="size-6" />
+                </div>
               </div>
-              <h3 className="text-3xl font-bold">{value}</h3>
-              <p className="text-sm">{label}</p>
+              <h3 className="text-3xl font-bold tracking-wider mt-2">{value}</h3>
+              <p className="text-sm font-normal">{label}</p>
             </div>
           );
         })}
       </section>
 
+      {/* Team Section */}
       <section aria-label="Our team">
-        <TeamCarousel />
+        <TeamSection />
       </section>
 
-      <section className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+      {/* Features Section */}
+      <section className="grid grid-cols-1 gap-8 sm:grid-cols-3 py-10">
         {FEATURES.map(({ icon: Icon, title, description }) => (
           <div
             key={title}
-            className="flex flex-col items-center gap-3 text-center"
+            className="flex flex-col items-center gap-4 text-center"
           >
-            <div className="flex size-14 items-center justify-center rounded-full bg-foreground text-background">
-              <Icon className="size-6" />
+            {/* Double Circle Icon Frame */}
+            <div className="flex size-20 items-center justify-center rounded-full bg-gray-300">
+              <div className="flex size-14 items-center justify-center rounded-full bg-black text-white">
+                <Icon className="size-8" />
+              </div>
             </div>
-            <h3 className="text-sm font-bold">{title}</h3>
-            <p className="text-xs text-muted-foreground">{description}</p>
+            <div className="flex flex-col gap-2">
+              <h3 className="text-base font-bold uppercase tracking-wider">
+                {title}
+              </h3>
+              <p className="text-xs text-gray-600">{description}</p>
+            </div>
           </div>
         ))}
       </section>

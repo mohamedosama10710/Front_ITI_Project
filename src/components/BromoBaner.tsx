@@ -64,12 +64,12 @@ export const PromoBanner: React.FC = () => {
         {/* Right Column: Speaker Image with Radial Glow Backdrop */}
         <div className="relative z-10 flex items-center justify-center w-full lg:w-1/2">
           {/* Ambient Blur Glow */}
-          <div className="absolute w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] bg-white/20 blur-[80px] rounded-full pointer-events-none" />
+          <div className="absolute  w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] bg-white/20 blur-[80px] rounded-full pointer-events-none" />
 
           <img
-            src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=700&q=80"
+            src="header/promo.png"
             alt="JBL Boombox Speaker"
-            className="relative z-10 max-h-[260px] sm:max-h-[350px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+            className="relative  z-10 max-h-[260px] sm:max-h-[350px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 mix-blend-screen"
           />
         </div>
 

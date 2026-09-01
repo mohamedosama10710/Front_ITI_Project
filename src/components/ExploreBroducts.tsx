@@ -48,7 +48,7 @@ export const ExploreProducts: React.FC = () => {
       {/* CTA Button */}
       <div className="mt-10 text-center">
         <Link
-          to="/category/electronics"
+          to="/category/all"
           className="inline-block bg-secondary-2 text-text font-medium text-base px-12 py-4 rounded hover:bg-btn-hover transition-colors duration-200"
         >
           View All Products

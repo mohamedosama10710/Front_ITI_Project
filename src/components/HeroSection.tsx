@@ -82,7 +82,7 @@ export const HeroSection: React.FC = () => {
                         </h1>
 
                         <Link
-                            to="/category/electronics"
+                            to="/category/all"
                             className="inline-flex items-center gap-2 font-medium text-sm sm:text-base text-text border-b border-text pb-1 hover:text-secondary-2 hover:border-secondary-2 transition-colors group mt-2"
                         >
                             <span>Shop Now</span>

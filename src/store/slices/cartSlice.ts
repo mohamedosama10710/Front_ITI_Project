@@ -23,36 +23,39 @@ export const cartSlice = createSlice({
             action: PayloadAction<{ product: Product; quantity?: number }>
         ) => {
             const { product, quantity = 1 } = action.payload;
+            const stock = product.stock ?? 999; // حماية من undefined stock
+
             const existingItem = state.items.find(
-                (item) => item.product.id === product.id
+                (item) => String(item.product.id) === String(product.id)
             );
 
             if (existingItem) {
                 const newQuantity = existingItem.quantity + quantity;
-                existingItem.quantity = Math.min(newQuantity, product.stock);
+                existingItem.quantity = Math.min(newQuantity, stock);
             } else {
-                const initialQuantity = Math.min(quantity, product.stock);
+                const initialQuantity = Math.min(quantity, stock);
                 if (initialQuantity > 0) {
                     state.items.push({ product, quantity: initialQuantity });
                 }
             }
         },
-        removeFromCart: (state, action: PayloadAction<string>) => {
+        removeFromCart: (state, action: PayloadAction<string | number>) => {
             state.items = state.items.filter(
-                (item) => item.product.id !== action.payload
+                (item) => String(item.product.id) !== String(action.payload)
             );
         },
         updateQuantity: (
             state,
-            action: PayloadAction<{ id: string; quantity: number }>
+            action: PayloadAction<{ id: string | number; quantity: number }>
         ) => {
             const { id, quantity } = action.payload;
-            const item = state.items.find((i) => i.product.id === id);
+            const item = state.items.find((i) => String(i.product.id) === String(id));
             if (item) {
+                const stock = item.product.stock ?? 999;
                 if (quantity <= 0) {
-                    state.items = state.items.filter((i) => i.product.id !== id);
+                    state.items = state.items.filter((i) => String(i.product.id) !== String(id));
                 } else {
-                    item.quantity = Math.min(quantity, item.product.stock);
+                    item.quantity = Math.min(quantity, stock);
                 }
             }
         },
